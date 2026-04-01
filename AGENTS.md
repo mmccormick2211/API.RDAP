@@ -19,6 +19,14 @@ All generated code must be **production-ready, maintainable, tested, and auditab
 
 ---
 
+## Pre-Codegen Cleanup Rule
+
+- Before any new code generation, remove template/sample scaffold artifacts first (for this repo: `Get-ModuleMetadata*`, `ConvertToHumanReadableSize*`, related generated help, and obsolete placeholder `.gitkeep` files when directories are no longer empty).
+- Commit this cleanup as a **separate commit** before adding generated feature code.
+- Use `+semver: none` for this cleanup-only commit.
+
+---
+
 ## Build & Test Commands
 
 ```powershell

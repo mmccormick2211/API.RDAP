@@ -20,6 +20,14 @@ See [AGENTS.md](../AGENTS.md) for the full coding guidelines. This file is a foc
 
 ---
 
+## Pre-Codegen Cleanup Rule
+
+- Before generating new code in this repository, remove template/sample scaffold artifacts first (for this repo: `Get-ModuleMetadata*`, `ConvertToHumanReadableSize*`, related generated help, and obsolete placeholder `.gitkeep` files when directories are no longer empty).
+- Commit this cleanup as a **separate commit** before generated feature code.
+- Use `+semver: none` for this cleanup-only commit.
+
+---
+
 ## DO / DO NOT
 
 ### DO

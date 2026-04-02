@@ -30,10 +30,10 @@ CompanyName = 'mmccormick2211'
 Copyright = '(c) mmccormick2211. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'PowerShell client for the Registration Data Access Protocol (RDAP). Provides cmdlets for querying domain, nameserver, entity, IP network, and autonomous system records from any RFC 7480/RFC 9082-compliant RDAP server.'
 
 # Minimum version of the PowerShell engine required by this module
-# PowerShellVersion = ''
+PowerShellVersion = '7.0'
 
 # Name of the PowerShell host required by this module
 # PowerShellHostName = ''
@@ -95,7 +95,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('RDAP', 'DNS', 'Whois', 'Registry', 'IP', 'Domain', 'ASN', 'Nameserver', 'Entity', 'RFC7480', 'RFC9082')
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/mmccormick2211/API.RDAP/blob/main/LICENSE'

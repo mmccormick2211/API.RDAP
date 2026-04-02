@@ -13,6 +13,9 @@ BeforeAll {
     } else {
         throw "Built module not found at: $manifestPath. Run 'Invoke-Build' first."
     }
+
+    # Live RDAP tests are opt-in to avoid network-dependent CI failures.
+    $script:runLiveRdapTests = [System.Convert]::ToBoolean($env:RUN_LIVE_RDAP_TESTS)
 }
 
 AfterAll {
@@ -153,6 +156,30 @@ Describe 'API.RDAP Integration Tests' -Tag 'Integration' {
             }
 
             $loadTime.TotalSeconds | Should -BeLessThan 5 -Because 'Module should load within 5 seconds'
+        }
+    }
+
+    Context 'Live RDAP Smoke Tests' {
+        It 'Should retrieve a known domain from the default RDAP server' -Skip:(-not $script:runLiveRdapTests) {
+            $result = Get-RDAPDomain -Name 'example.com'
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.GetType().Name | Should -Be 'RdapDomain'
+            $result.Name | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Should retrieve RDAP help data' -Skip:(-not $script:runLiveRdapTests) {
+            $result = Get-RDAPHelp
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.GetType().Name | Should -Be 'RdapHelp'
+            $result.RdapConformance.Count | Should -BeGreaterThan 0
+        }
+
+        It 'Should return a boolean from Test-RDAPObject' -Skip:(-not $script:runLiveRdapTests) {
+            $exists = Test-RDAPObject -Type Domain -Handle 'example.com'
+
+            $exists.GetType().Name | Should -Be 'Boolean'
         }
     }
 }

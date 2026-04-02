@@ -11,7 +11,7 @@ runs:
       shell: pwsh
       run: |
         Set-StrictMode -Version Latest
-        if (Test-Netconnection -ComputerName 'rdap.org' -Port 443 -InformationLevel Quiet -ErrorAction Stop) {
+        if (Test-Connection -TargetName 'rdap.org' -TcpPort 443 -Count 1 -Quiet -ErrorAction SilentlyContinue) {
           Write-Host "Network connectivity to rdap.org verified."
           $env:RUN_LIVE_RDAP_TESTS=TRUE
         } else {

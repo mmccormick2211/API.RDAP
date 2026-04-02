@@ -13,10 +13,10 @@ runs:
         Set-StrictMode -Version Latest
         if (Test-Connection -TargetName 'rdap.org' -TcpPort 443 -Count 1 -Quiet -ErrorAction SilentlyContinue) {
           Write-Host "Network connectivity to rdap.org verified."
-          $env:RUN_LIVE_RDAP_TESTS=TRUE
+          $env:RUN_LIVE_RDAP_TESTS='TRUE'
         } else {
           Write-Host "Unable to connect to rdap.org on port 443. Check network connectivity and firewall settings."
-          $env:RUN_LIVE_RDAP_TESTS=FALSE
+          $env:RUN_LIVE_RDAP_TESTS='FALSE'
         }
         Invoke-Build -Task IntegrationTests
 

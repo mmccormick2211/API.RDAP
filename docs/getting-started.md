@@ -26,7 +26,7 @@ All cmdlets default to `https://rdap.org` as the upstream server and accept a
 ## Core Functions
 
 | Cmdlet | Description |
-|---|---|
+| --- | --- |
 | `Get-RDAPDomain` | Look up a domain name |
 | `Get-RDAPNameserver` | Look up a nameserver by handle |
 | `Get-RDAPEntity` | Look up an entity (registrar, registrant) by handle |
@@ -154,7 +154,7 @@ if (Test-RDAPObject -Type Domain -Handle 'example.com') {
 ## Troubleshooting
 
 | Symptom | Likely Cause | Resolution |
-|---|---|---|
+| --- | --- | --- |
 | `404` error on a valid domain | Registry redirects differ from rdap.org | Try registry-specific server via `-Server` |
 | Empty `Nameservers` or `Entities` | RDAP server omits optional fields | Check `$result.RawResponse` for raw JSON |
 | `Test-RDAPObject` returns `$false` for known domain | TLD RDAP service unreachable | Verify with `Get-RDAPHelp -Server <tld-rdap-url>` |

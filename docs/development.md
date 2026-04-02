@@ -277,7 +277,7 @@ Invoke-Build Test
 Invoke-Build UnitTests                # Unit tests only
 Invoke-Build PSScriptAnalyzer         # Code analysis only
 Invoke-Build InjectionHunter          # Security scans only
-Invoke-Build IntegrationTests         # Integration tests (live smoke tests are opt-in)
+Invoke-Build IntegrationTests         # Integration tests (includes live RDAP smoke tests)
 
 # Run specific test file
 Invoke-Pester -Path ./src/Public/Get-Something.Tests.ps1
@@ -299,29 +299,15 @@ Invoke-Pester -Configuration @{
 }
 ```
 
-### Live RDAP Smoke Test Toggle
+### Live RDAP Smoke Tests
 
-The integration suite includes a Live RDAP Smoke Tests context. These tests call real RDAP endpoints and are disabled by default to avoid network-dependent failures.
+The integration suite includes a Live RDAP Smoke Tests context, and these tests always run as part of `Invoke-Build IntegrationTests`.
 
-When Invoke-Build IntegrationTests runs:
+Behavior:
 
-- If RUN_LIVE_RDAP_TESTS is missing, it is set to false automatically.
-- If RUN_LIVE_RDAP_TESTS is false, live smoke tests are skipped.
-- If RUN_LIVE_RDAP_TESTS is true, live smoke tests execute.
-
-Enable live smoke tests for the current session:
-
-```powershell
-$env:RUN_LIVE_RDAP_TESTS = 'true'
-Invoke-Build IntegrationTests
-```
-
-Disable live smoke tests explicitly:
-
-```powershell
-$env:RUN_LIVE_RDAP_TESTS = 'false'
-Invoke-Build IntegrationTests
-```
+- Live smoke tests call real RDAP endpoints (for example, `https://rdap.org`).
+- If outbound network access is unavailable, the smoke tests fail and the integration task fails.
+- `RUN_LIVE_RDAP_TESTS` is no longer used to enable, disable, or skip live smoke tests.
 
 ### Test Output Locations
 

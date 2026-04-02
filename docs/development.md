@@ -21,38 +21,38 @@ function Get-Something {
     <#
     .SYNOPSIS
         Brief one-line description of what the function does
-    
+
     .DESCRIPTION
         Detailed explanation of the function's purpose and behavior.
         Can span multiple lines for complex functions.
-    
+
     .PARAMETER Name
         Description of what this parameter does
-    
+
     .PARAMETER Force
         Description of Force parameter (optional switches)
-    
+
     .EXAMPLE
         Get-Something -Name 'Example'
-        
+
         Description of what this example demonstrates and expected output.
-    
+
     .EXAMPLE
         Get-Something -Name 'Test' -Force
-        
+
         Another example showing different usage pattern.
-    
+
     .INPUTS
         System.String
         You can pipe string values to this function
-    
+
     .OUTPUTS
         System.Object
         Returns custom object with properties
-    
+
     .NOTES
         Additional information about requirements, limitations, or notes
-    
+
     .LINK
         https://github.com/YourUsername/YourModule
     #>
@@ -66,30 +66,30 @@ function Get-Something {
         [ValidateNotNullOrEmpty()]
         [string]
         $Name,
-        
+
         [Parameter()]
         [switch]
         $Force
     )
-    
+
     begin {
         Write-Verbose "Starting $($MyInvocation.MyCommand)"
         $results = [System.Collections.Generic.List[object]]::new()
     }
-    
+
     process {
         try {
             # Should Process for destructive operations
             if ($PSCmdlet.ShouldProcess($Name, 'Process item')) {
                 Write-Verbose "Processing: $Name"
-                
+
                 # Your implementation here
                 $result = [PSCustomObject]@{
                     Name      = $Name
                     Processed = $true
                     Timestamp = Get-Date
                 }
-                
+
                 $results.Add($result)
             }
         }
@@ -99,7 +99,7 @@ function Get-Something {
             throw
         }
     }
-    
+
     end {
         Write-Verbose "Completed $($MyInvocation.MyCommand). Processed $($results.Count) items."
         return $results
@@ -123,16 +123,16 @@ Describe 'Get-Something' {
         It 'Should require Name parameter' {
             { Get-Something } | Should -Throw
         }
-        
+
         It 'Should not accept null or empty Name' {
             { Get-Something -Name '' } | Should -Throw
         }
-        
+
         It 'Should accept Name from pipeline' {
             { 'TestValue' | Get-Something } | Should -Not -Throw
         }
     }
-    
+
     Context 'Basic Functionality' {
         It 'Should return object with expected properties' {
             $result = Get-Something -Name 'Test'
@@ -141,38 +141,38 @@ Describe 'Get-Something' {
             $result.Processed | Should -Be $true
             $result.Timestamp | Should -BeOfType [DateTime]
         }
-        
+
         It 'Should process multiple items from pipeline' {
             $results = 'Item1', 'Item2', 'Item3' | Get-Something
             $results.Count | Should -Be 3
         }
     }
-    
+
     Context 'Error Handling' {
         It 'Should throw on invalid operation' {
             # Mock any external dependencies
             Mock Write-Verbose {}
-            
+
             { Get-Something -Name 'InvalidValue' } | Should -Throw
         }
-        
+
         It 'Should write error on failure' {
             # Test error handling behavior
             { Get-Something -Name 'ErrorCase' -ErrorAction Stop } | Should -Throw
         }
     }
-    
+
     Context 'WhatIf and Confirm' {
         It 'Should support WhatIf' {
             { Get-Something -Name 'Test' -WhatIf } | Should -Not -Throw
         }
-        
+
         It 'Should not process when WhatIf is specified' {
             $result = Get-Something -Name 'Test' -WhatIf
             # Verify no changes were made
         }
     }
-    
+
     Context 'Verbose Output' {
         It 'Should write verbose messages' {
             $verboseOutput = Get-Something -Name 'Test' -Verbose 4>&1
@@ -277,6 +277,7 @@ Invoke-Build Test
 Invoke-Build UnitTests                # Unit tests only
 Invoke-Build PSScriptAnalyzer         # Code analysis only
 Invoke-Build InjectionHunter          # Security scans only
+Invoke-Build IntegrationTests         # Integration tests (live smoke tests are opt-in)
 
 # Run specific test file
 Invoke-Pester -Path ./src/Public/Get-Something.Tests.ps1
@@ -296,6 +297,30 @@ Invoke-Pester -Configuration @{
         OutputPath = './test-results/unit-tests.xml'
     }
 }
+```
+
+### Live RDAP Smoke Test Toggle
+
+The integration suite includes a Live RDAP Smoke Tests context. These tests call real RDAP endpoints and are disabled by default to avoid network-dependent failures.
+
+When Invoke-Build IntegrationTests runs:
+
+- If RUN_LIVE_RDAP_TESTS is missing, it is set to false automatically.
+- If RUN_LIVE_RDAP_TESTS is false, live smoke tests are skipped.
+- If RUN_LIVE_RDAP_TESTS is true, live smoke tests execute.
+
+Enable live smoke tests for the current session:
+
+```powershell
+$env:RUN_LIVE_RDAP_TESTS = 'true'
+Invoke-Build IntegrationTests
+```
+
+Disable live smoke tests explicitly:
+
+```powershell
+$env:RUN_LIVE_RDAP_TESTS = 'false'
+Invoke-Build IntegrationTests
 ```
 
 ### Test Output Locations
@@ -322,10 +347,10 @@ Describe 'Module-Level Tests' {
         It 'Should behave in expected way' {
             # Arrange
             $input = 'test'
-            
+
             # Act
             $result = Get-Something -Name $input
-            
+
             # Assert
             $result | Should -Not -BeNullOrEmpty
         }

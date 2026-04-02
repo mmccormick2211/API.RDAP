@@ -13,7 +13,9 @@ BeforeAll {
     } else {
         throw "Built module not found at: $manifestPath. Run 'Invoke-Build' first."
     }
-}
+
+    # Live RDAP tests are opt-in to avoid network-dependent CI failures.
+    $script:runLiveRdapTests = [System.Convert]::ToBoolean($env:RUN_LIVE_RDAP_TESTS -eq 'true') }
 
 AfterAll {
     # Clean up
@@ -53,7 +55,7 @@ Describe 'API.RDAP Integration Tests' -Tag 'Integration' {
             # Discover public functions from source
             $publicFunctionsPath = Resolve-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath '../../src/Public/')
             $publicFunctionFiles = @(Get-ChildItem -Path $publicFunctionsPath -Include '*.ps1' -Exclude '*.Tests.ps1' -Recurse |
-                Select-Object -ExpandProperty BaseName)
+                    Select-Object -ExpandProperty BaseName)
         }
 
         It 'Should export at least one function' {
@@ -78,7 +80,7 @@ Describe 'API.RDAP Integration Tests' -Tag 'Integration' {
             $privateFunctionsPath = Join-Path $PSScriptRoot '../../src/Private'
             if (Test-Path $privateFunctionsPath) {
                 $privateFiles = Get-ChildItem -Path $privateFunctionsPath -Filter '*.ps1' -Exclude '*.Tests.ps1' |
-                Select-Object -ExpandProperty BaseName
+                    Select-Object -ExpandProperty BaseName
 
                 foreach ($functionName in $privateFiles) {
                     $exportedCommands | Should -Not -Contain $functionName -Because "Private function $functionName should not be exported"
@@ -153,6 +155,30 @@ Describe 'API.RDAP Integration Tests' -Tag 'Integration' {
             }
 
             $loadTime.TotalSeconds | Should -BeLessThan 5 -Because 'Module should load within 5 seconds'
+        }
+    }
+
+    Context 'Live RDAP Smoke Tests' {
+        It 'Should retrieve a known domain from the default RDAP server' -Skip:(-not $script:runLiveRdapTests) {
+            $result = Get-RDAPDomain -Name 'example.com'
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.GetType().Name | Should -Be 'RdapDomain'
+            $result.Name | Should -Not -BeNullOrEmpty
+        }
+
+        It 'Should retrieve RDAP help data' -Skip:(-not $script:runLiveRdapTests) {
+            $result = Get-RDAPHelp
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.GetType().Name | Should -Be 'RdapHelp'
+            $result.RdapConformance.Count | Should -BeGreaterThan 0
+        }
+
+        It 'Should return a boolean from Test-RDAPObject' -Skip:(-not $script:runLiveRdapTests) {
+            $exists = Test-RDAPObject -Type Domain -Handle 'example.com'
+
+            $exists.GetType().Name | Should -Be 'Boolean'
         }
     }
 }

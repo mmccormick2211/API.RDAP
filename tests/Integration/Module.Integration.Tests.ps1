@@ -15,8 +15,7 @@ BeforeAll {
     }
 
     # Live RDAP tests are opt-in to avoid network-dependent CI failures.
-    $script:runLiveRdapTests = [System.Convert]::ToBoolean($env:RUN_LIVE_RDAP_TESTS)
-}
+    $script:runLiveRdapTests = [System.Convert]::ToBoolean($env:RUN_LIVE_RDAP_TESTS -eq 'true') }
 
 AfterAll {
     # Clean up
@@ -56,7 +55,7 @@ Describe 'API.RDAP Integration Tests' -Tag 'Integration' {
             # Discover public functions from source
             $publicFunctionsPath = Resolve-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath '../../src/Public/')
             $publicFunctionFiles = @(Get-ChildItem -Path $publicFunctionsPath -Include '*.ps1' -Exclude '*.Tests.ps1' -Recurse |
-                Select-Object -ExpandProperty BaseName)
+                    Select-Object -ExpandProperty BaseName)
         }
 
         It 'Should export at least one function' {
@@ -81,7 +80,7 @@ Describe 'API.RDAP Integration Tests' -Tag 'Integration' {
             $privateFunctionsPath = Join-Path $PSScriptRoot '../../src/Private'
             if (Test-Path $privateFunctionsPath) {
                 $privateFiles = Get-ChildItem -Path $privateFunctionsPath -Filter '*.ps1' -Exclude '*.Tests.ps1' |
-                Select-Object -ExpandProperty BaseName
+                    Select-Object -ExpandProperty BaseName
 
                 foreach ($functionName in $privateFiles) {
                     $exportedCommands | Should -Not -Contain $functionName -Because "Private function $functionName should not be exported"

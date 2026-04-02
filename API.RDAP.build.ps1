@@ -103,6 +103,10 @@ Task UnitTests {
 
 # Synopsis: Run integration tests on built module
 Task IntegrationTests {
+    if (-not (Test-Path variable:env:RUN_LIVE_RDAP_TESTS) -or $null -eq $env:RUN_LIVE_RDAP_TESTS) {
+        $env:RUN_LIVE_RDAP_TESTS = 'false'
+    }
+
     if (-not (Test-Path $testOutputPath)) {
         [void] (New-Item -Path $testOutputPath -ItemType Directory)
     }

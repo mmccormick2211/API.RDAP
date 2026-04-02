@@ -2,9 +2,14 @@
 
 ## Overview
 
-API.RDAP provides a PowerShell-native interface to any [RDAP](https://tools.ietf.org/html/rfc7480) (Registration Data Access Protocol) server. It replaces ad-hoc `Invoke-RestMethod` calls against RDAP endpoints with typed cmdlets that return structured objects you can pipeline, filter, and export without manually parsing JSON.
+API.RDAP provides a PowerShell-native interface to any
+[RDAP](https://tools.ietf.org/html/rfc7480) (Registration Data Access Protocol)
+server. It replaces ad-hoc `Invoke-RestMethod` calls against RDAP endpoints with
+typed cmdlets that return structured objects you can pipeline, filter, and export
+without manually parsing JSON.
 
-All cmdlets default to `https://rdap.org` as the upstream server and accept a `-Server` parameter to target any RFC 7480-compliant endpoint.
+All cmdlets default to `https://rdap.org` as the upstream server and accept a
+`-Server` parameter to target any RFC 7480-compliant endpoint.
 
 ---
 
@@ -126,10 +131,15 @@ if (Test-RDAPObject -Type Domain -Handle 'example.com') {
 
 ## Best Practices
 
-- **Use `Test-RDAPObject` before bulk lookups** to skip non-existent records and avoid exception noise.
-- **Cache `Get-RDAPHelp` output** — server capabilities rarely change mid-session. Store the result in a variable rather than calling it repeatedly.
-- **Prefer registry-specific servers** for authoritative data. For example, use `https://rdap.arin.net/registry` for ARIN-managed resources rather than the global redirect at `rdap.org`.
-- **Inspect `$result.RawResponse`** when you need fields beyond the typed properties. Every return object carries the full API response.
+- **Use `Test-RDAPObject` before bulk lookups** to skip non-existent records and
+  avoid exception noise.
+- **Cache `Get-RDAPHelp` output** — server capabilities rarely change mid-session.
+  Store the result in a variable rather than calling it repeatedly.
+- **Prefer registry-specific servers** for authoritative data. For example, use
+  `https://rdap.arin.net/registry` for ARIN-managed resources rather than the
+  global redirect at `rdap.org`.
+- **Inspect `$result.RawResponse`** when you need fields beyond the typed
+  properties. Every return object carries the full API response.
 
 ---
 
